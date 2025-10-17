@@ -1,0 +1,165 @@
+{
+  "info": {
+    "_postman_id": "b50eb208-ddf6-4dd1-a433-e17ab17d3e1d",
+    "name": "Auth API – Minimal JWT",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Postman collection for a minimal JWT-based authentication API.\n\nVariables:\n- {{baseUrl}}: Base URL of the API (e.g., http://localhost:5000 or http://localhost:8080)\n- {{jwt}}: Will be set automatically after successful login.\n\nFolders:\n- Auth: register, login, me (protected)\n- Demo: protected ping (example protected resource)\n\nNotes:\n- Update request paths if your API routes differ.\n- The Login request has a test script to capture the token from the response body { token: \"<JWT>\" }.\n"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"P@ssw0rd!\",\n  \"fullName\": \"Sample User\"\n}"
+            },
+            "description": "Creates a new user with hashed password."
+          },
+          "response": []
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Expect response JSON like: { token: \"<JWT>\", expiresIn: 3600 }",
+                  "pm.test('Login succeeded', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "try {",
+                  "  const data = pm.response.json();",
+                  "  if (data && data.token) {",
+                  "    pm.collectionVariables.set('jwt', data.token);",
+                  "    console.log('JWT stored in collection variable');",
+                  "  } else {",
+                  "    console.warn('No token field found in response.');",
+                  "  }",
+                  "} catch (e) {",
+                  "  console.error('Failed to parse JSON response', e);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"P@ssw0rd!\"\n}"
+            },
+            "description": "Logs in a user and returns a JWT token."
+          },
+          "response": []
+        },
+        {
+          "name": "Me (Protected)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "me"
+              ]
+            },
+            "description": "Returns details of the currently authenticated user."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Demo",
+      "item": [
+        {
+          "name": "Protected Ping",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/secure/ping",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "secure",
+                "ping"
+              ]
+            },
+            "description": "Example protected resource to verify middleware works."
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000"
+    },
+    {
+      "key": "jwt",
+      "value": ""
+    }
+  ]
+}
