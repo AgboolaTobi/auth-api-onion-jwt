@@ -1,6 +1,7 @@
 Auth API - Onion Architecture with JWT
 A secure authentication API built with .NET 8 using Clean/Onion Architecture principles and JWT token-based authentication.
 🏗️ Architecture
+
 This project follows the Onion Architecture pattern with clear separation of concerns:
 
 Layers
@@ -53,9 +54,15 @@ Update appsettings.json in the Auth.Api project:
 
 git clone https://github.com/AgboolaTobi/auth-api-onion-jwt.git
 cd auth-api-onion-jwt
+
 2. Restore Dependencies
+
 dotnet restore
+
 3. Apply Database Migrations
+
 cd src/Auth.Api
+
 dotnet ef database update
+
 dotnet run
